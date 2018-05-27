@@ -1,0 +1,6 @@
+[submodule "linear-algebra"]
+	path = linear-algebra
+	url = https://github.com/elm-explorations/linear-algebra.git
+[submodule "webgl"]
+	path = webgl
+	url = https://github.com/elm-explorations/webgl.git
