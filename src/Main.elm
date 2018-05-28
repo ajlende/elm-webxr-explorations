@@ -1,7 +1,9 @@
 module Main exposing (main)
 
 import Html exposing (..)
+import Html.Attributes exposing (height, width)
 import Html.Events exposing (onClick)
+import WebGL exposing (clearColor)
 
 
 -- MAIN
@@ -76,4 +78,11 @@ view model =
         [ button [ onClick Decrement ] [ text "-" ]
         , div [] [ text (toString model.count) ]
         , button [ onClick Increment ] [ text "+" ]
+        , WebGL.toHtmlWith
+            [ clearColor 0.027 0.216 0.275 1.0
+            ]
+            [ width 500
+            , height 500
+            ]
+            []
         ]
