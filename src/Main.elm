@@ -2,9 +2,8 @@ module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (height, width)
-import Math.Matrix4 as Matrix4 exposing (Mat4)
 import WebGL exposing (clearColor)
-import WebXR.AnimationFrame exposing (Frame, frame, getPose, getTime, times)
+import WebXR.AnimationFrame exposing (Frame, frame, getPose, getTime, initFrame, times)
 
 
 -- MAIN
@@ -35,7 +34,7 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    ( { frame = frame 0 Matrix4.identity }, Cmd.none )
+    ( { frame = initFrame }, Cmd.none )
 
 
 
