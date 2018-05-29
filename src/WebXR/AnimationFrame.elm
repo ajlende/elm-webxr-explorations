@@ -6,6 +6,7 @@ effect module WebXR.AnimationFrame
         , frame
         , getPose
         , getTime
+        , initFrame
         , times
         )
 
@@ -33,6 +34,11 @@ import Time exposing (Time)
 
 type Frame
     = Frame
+
+
+initFrame : Frame
+initFrame =
+    frame 0 Matrix4.identity
 
 
 frame : Time -> Mat4 -> Frame
