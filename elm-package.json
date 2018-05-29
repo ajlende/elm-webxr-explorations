@@ -3,10 +3,14 @@
     "summary": "helpful summary of your project, less than 80 characters",
     "repository": "https://github.com/elm-community/webgl.git",
     "license": "BSD3",
-    "source-directories": ["src", "webgl/src"],
-    "native-modules": true,
+    "source-directories": [
+        "src",
+        "webgl/src"
+    ],
     "exposed-modules": [],
+    "native-modules": true,
     "dependencies": {
+        "elm-community/linear-algebra": "3.1.2 <= v < 4.0.0",
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0"
     },
