@@ -2,8 +2,9 @@ module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (height, width)
-import Html.Events exposing (onClick)
+import Math.Matrix4 as Matrix4 exposing (Mat4)
 import WebGL exposing (clearColor)
+import WebXR.AnimationFrame exposing (Frame, frame, getPose, getTime, times)
 
 
 -- MAIN
@@ -24,7 +25,7 @@ main =
 
 
 type alias Model =
-    { count : Int
+    { frame : Frame
     }
 
 
@@ -34,10 +35,7 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    ( { count = 0
-      }
-    , Cmd.none
-    )
+    ( { frame = frame 0 Matrix4.identity }, Cmd.none )
 
 
 
@@ -46,7 +44,7 @@ init flags =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    times Animate
 
 
 
@@ -54,18 +52,18 @@ subscriptions model =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = NoOp
+    | Animate Frame
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Increment ->
-            ( { model | count = model.count + 1 }, Cmd.none )
+        NoOp ->
+            ( model, Cmd.none )
 
-        Decrement ->
-            ( { model | count = model.count - 1 }, Cmd.none )
+        Animate frame ->
+            ( { model | frame = frame }, Cmd.none )
 
 
 
@@ -75,14 +73,17 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (toString model.count) ]
-        , button [ onClick Increment ] [ text "+" ]
-        , WebGL.toHtmlWith
+        [ WebGL.toHtmlWith
             [ clearColor 0.027 0.216 0.275 1.0
             ]
             [ width 500
             , height 500
             ]
             []
+        , div []
+            [ text ("Time: " ++ (model.frame |> getTime |> toString))
+            ]
+        , div []
+            [ text ("Pose: " ++ (model.frame |> getPose |> toString))
+            ]
         ]
