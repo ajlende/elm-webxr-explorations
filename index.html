@@ -2,13 +2,28 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>
+    <meta name='mobile-web-app-capable' content='yes'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+
+    <!-- Origin Trial Token, feature = WebXR Device API, origin = https://localhost, expires = 2018-07-24 -->
+    <meta http-equiv="origin-trial" data-feature="WebXR Device API" data-expires="2018-07-24" content="AnqhdDbAvAOgYe6yz4ktaTRwAGZmDNx0b5hkBCvQZqgDMFYk/LrGan/6O1blSqhjZGjWbkl4OFVhmzGBQej5FQwAAABOeyJvcmlnaW4iOiJodHRwczovL2xvY2FsaG9zdDo0NDMiLCJmZWF0dXJlIjoiV2ViWFJEZXZpY2UiLCJleHBpcnkiOjE1MzIzOTY2ODh9">
+    <!-- Origin Trial Token, feature = WebXR Gamepad Support, origin = https://localhost, expires = 2018-07-24 -->
+    <meta http-equiv="origin-trial" data-feature="WebXR Gamepad Support" data-expires="2018-07-24" content="AkvYmaT5rzRsoF9gxLwPEGHcZdFuStwWIRUT7ln8mz4/9sq/ZVLzbw/h0sb+Mq29yQB6v3vaQH7SZtw4lF+axwQAAABWeyJvcmlnaW4iOiJodHRwczovL2xvY2FsaG9zdDo0NDMiLCJmZWF0dXJlIjoiV2ViWFJHYW1lcGFkU3VwcG9ydCIsImV4cGlyeSI6MTUzMjM5NjY4OH0=">
+
+    <!-- Origin Trial Token, feature = WebXR Device API, origin = https://ajlende.com, expires = 2018-07-24 -->
+    <meta http-equiv="origin-trial" data-feature="WebXR Device API" data-expires="2018-07-24" content="Aqi1AVSKbNc2w9g6Xw7eay1/PkXH0WA3oeaaYlR0it7Qlqb/YWyWUvxVFkl+PEIqF1/CxkTdgHEewnWOGCa/5gkAAABQeyJvcmlnaW4iOiJodHRwczovL2FqbGVuZGUuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJYUkRldmljZSIsImV4cGlyeSI6MTUzMjM5NjY4OH0=">
+    <!-- Origin Trial Token, feature = WebXR Gamepad Support, origin = https://ajlende.com, expires = 2018-07-24 -->
+    <meta http-equiv="origin-trial" data-feature="WebXR Gamepad Support" data-expires="2018-07-24" content="AgG963fK953zErubldl3nTEEwRRiEZvJ5Q3A1d0nCcNwyNhY7w/7X3y+xsU4EocSKzEuaNlpyFOFzbjy5BoVuA0AAABYeyJvcmlnaW4iOiJodHRwczovL2FqbGVuZGUuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJYUkdhbWVwYWRTdXBwb3J0IiwiZXhwaXJ5IjoxNTMyMzk2Njg4fQ==">
+
+    <!-- Origin Trial Token, feature = WebXR Device API, origin = https://192.168.1.108, expires = 2018-07-24 -->
+    <meta http-equiv="origin-trial" data-feature="WebXR Device API" data-expires="2018-07-24" content="AgSXvWkLiFTuQFoLTzTLsBHqTGu7Aq8LKKPvrTygRkiN/Yc0Eds3PVgv1+Agfk2myawgTC2gzujqKAu7ejVKAAkAAABSeyJvcmlnaW4iOiJodHRwczovLzE5Mi4xNjguMS4xMDg6NDQzIiwiZmVhdHVyZSI6IldlYlhSRGV2aWNlIiwiZXhwaXJ5IjoxNTMyNDAwMjIzfQ==">
+    <!-- Origin Trial Token, feature = WebXR Gamepad Support, origin = https://192.168.1.108, expires = 2018-07-24 -->
+    <meta http-equiv="origin-trial" data-feature="WebXR Gamepad Support" data-expires="2018-07-24" content="Ar2JdZUJRADtQjZOMNgNG+m9jhjaJd7Pmuxs4FLBfL2rthkp05ve+jZ+gbBluP/fTONie0DzEtlb1DpEdRbtMggAAABaeyJvcmlnaW4iOiJodHRwczovLzE5Mi4xNjguMS4xMDg6NDQzIiwiZmVhdHVyZSI6IldlYlhSR2FtZXBhZFN1cHBvcnQiLCJleHBpcnkiOjE1MzI0MDAyMjN9">
+
     <title>WebXR in Elm</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src='https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js'></script>
-    <script>var polyfill = new WebXRPolyfill()</script>
 </head>
 
 <body>

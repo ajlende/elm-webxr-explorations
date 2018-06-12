@@ -1,30 +1,48 @@
-const _elm_community$webgl$Native_AnimationFrame = (() => {
-    const frame = F2((time, pose) => ({ ctor: "Frame", time, pose }))
+var _elm_community$webgl$Native_AnimationFrame = (() => {
+    // TODO: Get identity directly from linear-algebra so nothing breaks if the
+    // implementation changes.
+
+    // prettier-ignore
+    const identity = [
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    ]
+
+    const createFrame = F2((time, frame) => ({
+        ctor: "Frame",
+        time,
+        frame
+    }))
 
     const getTime = ({ time }) => time
 
-    const getPose = ({ pose }) => pose
+    const setTime = (time, { frame }) => A2(createFrame, time, frame)
 
-    const createRAFSub = () =>
+    const getPose = F2(({ frameOfRef }, { frame }) =>
+        frame.getDevicePose(frameOfRef)
+    )
+
+    const createRAFSub = session =>
         _elm_lang$core$Native_Scheduler.nativeBinding(callback => {
-            // prettier-ignore
-            const identity = [
-                1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                0.0, 0.0, 0.0, 1.0
-            ]
-
-            const onXRFrame = (time = Date.now(), pose = identity) => {
-                const result = A2(frame, time, pose)
+            const onXRFrame = (time = Date.now(), frame = null) => {
+                const frameOfReference = getXRFrameOfReferenceSomehow()
+                const result = A4(
+                    createFrame,
+                    time,
+                    frame,
+                    session,
+                    frameOfReference
+                )
                 const task = _elm_lang$core$Native_Scheduler.succeed(result)
                 callback(task)
             }
 
-            const id = requestAnimationFrame(onXRFrame)
+            const id = session.requestAnimationFrame(onXRFrame)
 
-            return () => cancelAnimationFrame(id)
+            return () => session.cancelAnimationFrame(id)
         })
 
-    return { createRAFSub, frame, getTime, getPose }
+    return { createRAFSub, createFrame, getTime, setTime, getPose }
 })()

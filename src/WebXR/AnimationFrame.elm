@@ -1,12 +1,10 @@
 effect module WebXR.AnimationFrame
-    where { subscription = MySub }
+    where { subscription = AFSub }
     exposing
         ( Frame
         , diffs
-        , frame
         , getPose
         , getTime
-        , initFrame
         , times
         )
 
@@ -30,20 +28,11 @@ import Native.AnimationFrame
 import Process
 import Task exposing (Task)
 import Time exposing (Time)
+import WebXR.Context exposing (Context, context)
 
 
 type Frame
     = Frame
-
-
-initFrame : Frame
-initFrame =
-    frame 0 Matrix4.identity
-
-
-frame : Time -> Mat4 -> Frame
-frame =
-    Native.AnimationFrame.frame
 
 
 getPose : Frame -> Mat4
@@ -54,6 +43,11 @@ getPose =
 getTime : Frame -> Time
 getTime =
     Native.AnimationFrame.getTime
+
+
+setTime : Time -> Frame -> Frame
+setTime =
+    Native.AnimationFrame.setTime
 
 
 {-| Subscribe to the current time, given in lockstep with the browser's natural
@@ -76,12 +70,12 @@ diffs tagger =
 -- SUBSCRIPTIONS
 
 
-type MySub msg
+type AFSub msg
     = Time (Frame -> msg)
     | Diff (Frame -> msg)
 
 
-subMap : (a -> b) -> MySub a -> MySub b
+subMap : (a -> b) -> AFSub a -> AFSub b
 subMap func sub =
     case sub of
         Time tagger ->
@@ -96,49 +90,41 @@ subMap func sub =
 
 
 type alias State msg =
-    { subs : List (MySub msg)
+    { subs : List (AFSub msg)
     , request : Maybe Process.Id
+    , context : Context
     , oldFrame : Frame
     }
 
 
 init : Task Never (State msg)
 init =
-    Task.succeed (State [] Nothing Frame)
+    Task.succeed (State [] Nothing context Frame)
 
 
-onEffects : Platform.Router msg Frame -> List (MySub msg) -> State msg -> Task Never (State msg)
-onEffects router subs { request, oldFrame } =
+onEffects : Platform.Router msg Frame -> List (AFSub msg) -> State msg -> Task Never (State msg)
+onEffects router subs { request, context, oldFrame } =
     case ( request, subs ) of
         ( Nothing, [] ) ->
-            Task.succeed (State [] Nothing oldFrame)
+            Task.succeed (State [] Nothing context oldFrame)
 
         ( Just pid, [] ) ->
             Process.kill pid
-                |> Task.andThen (\_ -> Task.succeed (State [] Nothing oldFrame))
+                |> Task.andThen (\_ -> Task.succeed (State [] Nothing context oldFrame))
 
         ( Nothing, _ ) ->
-            Process.spawn (Task.andThen (Platform.sendToSelf router) rAF)
-                |> Task.andThen (\pid -> Task.succeed (State subs (Just pid) oldFrame))
+            Process.spawn (Task.andThen (Platform.sendToSelf router) (rAF context))
+                |> Task.andThen (\pid -> Task.succeed (State subs (Just pid) context oldFrame))
 
         ( Just _, _ ) ->
-            Task.succeed (State subs request oldFrame)
+            Task.succeed (State subs request context oldFrame)
 
 
 onSelfMsg : Platform.Router msg Frame -> Frame -> State msg -> Task Never (State msg)
-onSelfMsg router newFrame { subs, oldFrame } =
+onSelfMsg router newFrame { subs, oldFrame, context } =
     let
-        newPose =
-            getPose newFrame
-
-        newTime =
-            getTime newFrame
-
-        oldTime =
-            getTime oldFrame
-
         diffFrame =
-            frame (newTime - oldTime) newPose
+            setTime (getTime newFrame - getTime oldFrame) newFrame
 
         send sub =
             case sub of
@@ -148,14 +134,14 @@ onSelfMsg router newFrame { subs, oldFrame } =
                 Diff tagger ->
                     Platform.sendToApp router (tagger diffFrame)
     in
-    Process.spawn (Task.andThen (Platform.sendToSelf router) rAF)
+    Process.spawn (Task.andThen (Platform.sendToSelf router) (rAF context))
         |> Task.andThen
             (\pid ->
                 Task.sequence (List.map send subs)
-                    |> Task.andThen (\_ -> Task.succeed (State subs (Just pid) newFrame))
+                    |> Task.andThen (\_ -> Task.succeed (State subs (Just pid) context newFrame))
             )
 
 
-rAF : Task x Frame
-rAF =
-    Native.AnimationFrame.createRAFSub ()
+rAF : Context -> Task x Frame
+rAF context =
+    Native.AnimationFrame.createRAFSub context
