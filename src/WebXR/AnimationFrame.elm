@@ -9,10 +9,10 @@ effect module WebXR.AnimationFrame
         )
 
 {-| WebXR has a special requestAnimationFrame function that includes a
-timestamp and an [XRPresentationFrame]. For now, I'm just exposing the Pose as
+timestamp and an [XRFrame]. For now, I'm just exposing the Pose as
 a [Mat4] from [elm-community/linear-algebra].
 
-[XRPresentationFrame]: https://immersive-web.github.io/webxr/#xrpresentationframe-interface
+[XRFrame]: https://immersive-web.github.io/webxr/#xrpresentationframe-interface
 [Mat4]: http://package.elm-lang.org/packages/elm-community/linear-algebra/3.1.2/Math-Matrix4#Mat4
 [elm-community/linear-algebra]: http://package.elm-lang.org/packages/elm-community/linear-algebra/latest
 
