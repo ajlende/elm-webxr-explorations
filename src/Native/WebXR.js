@@ -20,7 +20,8 @@ var _elm_community$webgl$Native_WebXR = (() => {
             new Promise((resolve, reject) => {
                 let count = 0
                 let timer
-                const setXRContextGlobally = () => {
+                // 😧 🤷‍♂ 🔥
+                const getGlobalXRContext = () => {
                     count++
                     if (count > 10) {
                         reject(new Error("Context is missing"))
@@ -33,7 +34,7 @@ var _elm_community$webgl$Native_WebXR = (() => {
                         window.clearInterval(timer)
                     }
                 }
-                setInterval(setXRContextGlobally, 1000)
+                timer = setInterval(getGlobalXRContext, 1000)
             })
     })
 
