@@ -4,6 +4,10 @@ var _elm_community$webgl$Native_WebXR = (() => {
 
     const cache = {}
 
+    const enterXRAction = {
+        ctor: "EnterXRExclusive"
+    }
+
     /**
      * A context for passing around "globals" needed for WebXR
      * @private
@@ -13,36 +17,34 @@ var _elm_community$webgl$Native_WebXR = (() => {
      */
     const createContext = (device, session, frameOfRef) => ({
         ctor: "Context",
-        device,
-        session,
-        frameOfRef,
+        cache,
         requestWebGL: () =>
             new Promise((resolve, reject) => {
                 let count = 0
                 let timer
                 // 😧 🤷‍♂ 🔥
-                const getGlobalXRContext = () => {
+                const getGlobalGLContext = () => {
                     count++
                     if (count > 10) {
                         reject(new Error("Context is missing"))
                         window.clearInterval(timer)
                     }
-                    if (window._elm_community$webgl$Native_WebXR$context) {
+                    if (window._elm_community$webgl$Native_WebXR$gl) {
                         resolve(
-                            window._elm_community$webgl$Native_WebXR$context
+                            window._elm_community$webgl$Native_WebXR$gl
                         )
                         window.clearInterval(timer)
                     }
                 }
-                timer = setInterval(getGlobalXRContext, 1000)
+                timer = setInterval(getGlobalGLContext, 1000)
             })
     })
 
     const upgrade = (context, options) =>
         _elm_lang$core$Native_Scheduler.nativeBinding(async callback => {
             // Default XR options
-            let exclusive = true
-            let frameOfReferenceType = "eyeLevel"
+            let exclusive = false
+            let frameOfReferenceType = "eye-level"
 
             _elm_lang$core$Native_List.toArray(options).forEach(option => {
                 switch (option.ctor) {
@@ -69,40 +71,38 @@ var _elm_community$webgl$Native_WebXR = (() => {
                 if (!navigator.xr) throw new Error("WebXR not supported")
                 LOG("XR supported")
 
-                LOG("request XRDevice")
+                const outputCanvas = document.createElement("canvas")
+                const outputContext = outputCanvas.getContext("xrpresent")
+                document.body.appendChild(outputCanvas)
+                LOG("XR mirror canvas created")
+
+                const gl = await context.requestWebGL()
+                LOG("WebGL context acquired")
+
                 const device = await navigator.xr.requestDevice()
                 cache.device = device
                 LOG("XRDevice created")
 
-                LOG("check XRSession")
-                await device
-                    .supportsSession({ exclusive })
-                    .catch(() => (exclusive = false))
-                if (!exclusive) LOG("Warning: NotExclusiveSession")
+                await gl.setCompatibleXRDevice(device)
+                LOG("XRDevice attached")
 
-                LOG("request XRSession")
+                await device.supportsSession({ exclusive, outputContext })
+                if (!exclusive) LOG("Warning: NotExclusiveSession")
+                LOG("XRSession supported")
+
                 const session = await device.requestSession({
-                    exclusive
+                    exclusive,
+                    outputContext
                 })
                 cache.session = session
                 LOG("XRSession created")
 
-                LOG(`request "${frameOfReferenceType}" XRFrameOfReference`)
                 const frameOfRef = await session.requestFrameOfReference(
                     frameOfReferenceType
                 )
                 cache.frameOfRef = frameOfRef
                 LOG("XRFrameOfRef created")
 
-                LOG("request WebGL context")
-                const gl = await context.requestWebGL()
-                LOG("WebGL context acquired")
-
-                LOG("try setCompatibleXRDevice")
-                await gl.setCompatibleXRDevice(device)
-                LOG("XRDevice attached")
-
-                LOG("create baseLayer XRWebGLLayer ")
                 session.baseLayer = new XRWebGLLayer(session, gl)
                 LOG("XRWebGLLayer created")
 
