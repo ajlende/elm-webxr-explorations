@@ -49,10 +49,10 @@ var _elm_community$webgl$Native_WebXR = (() => {
                     case "FrameOfRef":
                         switch (option._0.ctor) {
                             case "HeadModel":
-                                xrSettings.frameOfReferenceType = "headModel"
+                                xrSettings.frameOfReferenceType = "head-model"
                                 break
                             case "EyeLevel":
-                                xrSettings.frameOfReferenceType = "eyeLevel"
+                                xrSettings.frameOfReferenceType = "eye-level"
                                 break
                             case "Stage":
                                 xrSettings.frameOfReferenceType = "stage"
